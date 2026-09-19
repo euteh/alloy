@@ -1,29 +1,41 @@
-# Alloy B2B Platform — pachet de planificare (inainte de Lovable)
+# Alloy B2B Platform
 
-Livrabile pregatite la cererea explicita a operatorului: „nu as incepe inca sa
-construim in Lovable — as face mai intai schema completa + arhitectura +
-fluxurile + structura Google Sheets, apoi prompturi Lovable etapizate."
+CRM intern (Alloy Romania) + portal B2B pentru clienti (inclusiv EUTEH). Construit
+direct ca aplicatie Vite + React + TypeScript + Supabase — nu in Lovable (decizie
+finala a operatorului, 2026-09-19, dupa un pivot anterior catre Lovable care a
+fost abandonat).
 
-## Continut
+## Continut de referinta (pastrat din faza de planificare)
+- `ARCHITECTURE.md`, `USER_FLOWS.md`, `GOOGLE_SHEETS_STRUCTURE.md`,
+  `DESIGN_REFERENCE.md` — raman valabile ca documentatie de arhitectura/design,
+  chiar daca `lovable-prompts/faza-1-fundatie.md` nu se mai foloseste ca prompt
+  (ramane doar ca istoric al specificatiei Fazei 1).
 
-- `ARCHITECTURE.md` — harta modulelor, servicii independente (Order/PDF/Email),
-  principiul „portalul nu citeste live Google Sheets".
-- `supabase/migrations/0001_schema.sql` — schema completa Postgres/Supabase
-  (Faza 1-2): companii, utilizatori, categorii, produse, discounturi, comenzi,
-  cu RLS (izolare de date impusa in baza de date, nu doar in UI).
-- `USER_FLOWS.md` — fluxurile principale (admin configureaza client, client
-  cauta si comanda, sincronizare catalog, izolare de date).
-- `GOOGLE_SHEETS_STRUCTURE.md` — formatul exact pe care Sync Engine-ul (Faza 3)
-  il va astepta de la Google Sheet.
-- `lovable-prompts/faza-1-fundatie.md` — primul prompt, gata de copiat in
-  Lovable, pentru fundatie (auth, roluri, companii, utilizatori, catalog, CRUD
-  de baza, date demo). Fara cautare avansata, cos/comanda functionala sau
-  sincronizare — acelea sunt prompturi separate, urmatoare.
+## Setup local
+```bash
+npm install
+cp .env.example .env   # completeaza VITE_SUPABASE_URL si VITE_SUPABASE_ANON_KEY
+npm run dev
+```
 
-## Ordinea urmatoare
-1. Operatorul confirma/ajusteaza schema si structura Google Sheets.
-2. Ruleaza `faza-1-fundatie.md` in Lovable.
-3. Se verifica fundatia (izolarea de date, rolurile) inainte de urmatorul prompt.
-4. Se scriu prompturile pentru Faza 3 (sincronizare), 4 (portal + cautare),
-   5 (cos+comanda), 6 (PDF+email), 7 (CRM avansat) — cate unul, dupa ce faza
-   anterioara e stabila.
+Trebuie creat un proiect Supabase (gratuit) si rulate, in ordine:
+1. `supabase/migrations/0001_schema.sql` (schema + RLS)
+2. `supabase/seed.sql` (date demo — citeste notele din fisier, utilizatorii
+   Auth se creeaza manual din Dashboard, nu prin SQL)
+
+## Stare (Faza 1 — fundatie)
+Implementat si verificat (`tsc --noEmit` 0 erori, `npm run dev` porneste):
+autentificare, roluri (admin/client_b2b), izolare de date prin RLS, CRUD complet
+pe clienti/produse/categorii/discounturi/utilizatori, catalog + cautare simpla
+in portal cu pret calculat pe baza discountului companiei.
+
+**Netestat**: comportament real fata de o baza Supabase live — nu exista inca
+proiect Supabase creat/conectat in acest mediu.
+
+**Neimplementat inca** (fazele urmatoare, per `ARCHITECTURE.md`): cos si generare
+comanda functionala (PDF/email), sincronizare automata din Google Sheets,
+cautare avansata (tolerant la typo-uri — indexii `pg_trgm` sunt deja in schema),
+rapoarte.
+
+## Repo
+`https://github.com/euteh/alloy` (branch `main`).
