@@ -1,10 +1,9 @@
 -- Date demo — Faza 1. Ruleaza DUPA 0001_schema.sql.
 -- Utilizatorii (auth.users) NU se creeaza aici — Supabase Auth are propriul flux
 -- (parola hash-uita, confirmare email etc.), fragil de reprodus corect in SQL
--- brut si dependent de versiunea Supabase. Creeaza-i manual din Dashboard:
--- Authentication -> Add user (email + parola), apoi copiaza ID-ul generat si
--- foloseste-l in INSERT-urile din `app_users` de mai jos (inlocuieste
--- '<ID-AUTH-EUTEH>' etc. cu ID-urile reale).
+-- brut. Creeaza-i manual din Dashboard: Authentication -> Add user (email +
+-- parola). INSERT-urile de mai jos ii gasesc automat dupa email (subquery pe
+-- auth.users) — nu trebuie sa copiezi niciun ID.
 
 -- 3 companii demo (EUTEH e reala, per operator — celelalte doua sunt exemple).
 insert into public.companies (id, company_name, cui, address, city, contact_person, email, phone, status) values
@@ -49,6 +48,19 @@ insert into public.client_category_discounts (company_id, category_id, discount_
   ('33333333-3333-3333-3333-333333333333', 'c2222222-2222-2222-2222-222222222222', 15),
   ('33333333-3333-3333-3333-333333333333', 'c5555555-5555-5555-5555-555555555555', 10);
 
+-- Utilizatori: admin (Cristi) + EUTEH (client B2B). Gasiti automat dupa email
+-- in auth.users — creaza-i intai din Dashboard (Authentication -> Add user)
+-- cu EXACT aceste email-uri, apoi ruleaza acest fisier.
+insert into public.app_users (id, company_id, name, email, role)
+select id, null, 'Cristian Popescu', email, 'admin'
+from auth.users where email = 'c.popescu1974@gmail.com'
+on conflict (id) do nothing;
+
+insert into public.app_users (id, company_id, name, email, role)
+select id, '11111111-1111-1111-1111-111111111111', 'EUTEH', email, 'client_b2b'
+from auth.users where email = 'office@euteh.ro'
+on conflict (id) do nothing;
+
 -- Comenzi demo (inserate direct — fluxul UI de comanda e Faza 5, nu inca).
 insert into public.orders (id, company_id, user_id, order_number, status, subtotal, discount_total, total)
 select
@@ -58,8 +70,5 @@ select
   'ALY-2026-0001',
   'confirmed',
   107.50, 17.50, 90.00
-from public.app_users u where u.company_id = '11111111-1111-1111-1111-111111111111' limit 1;
-
--- NOTA: acest INSERT de comanda produce 0 randuri pana nu exista cel putin un
--- app_users legat de compania EUTEH (vezi instructiunile de mai sus). Ruleaza-l
--- DUPA ce ai creat si legat utilizatorii demo.
+from public.app_users u where u.company_id = '11111111-1111-1111-1111-111111111111' limit 1
+on conflict (id) do nothing;
