@@ -1,0 +1,45 @@
+/* Paleta Alloy Romania — #DC2626 dat explicit de operator (2026-09-18) ca si culoare
+   de brand. Restul (gri/negru/alb) ramane extras din mockup-urile primite. */
+:root {
+  color-scheme: light;
+  --alloy-red: #dc2626;
+  --alloy-red-dark: #b91c1c;
+  --alloy-red-soft: #fdf2f2;
+  --alloy-gray-900: #1f2328;
+  --alloy-gray-700: #4b5259;
+  --alloy-gray-500: #7a828a;
+  --alloy-gray-200: #e6e8eb;
+  --alloy-gray-100: #f5f6f7;
+  --alloy-white: #ffffff;
+  --alloy-green: #1a7f4b;
+  --alloy-amber: #b8860b;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--alloy-gray-100);
+  color: var(--alloy-gray-900);
+  font-size: 14px;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  color: var(--alloy-red);
+}
