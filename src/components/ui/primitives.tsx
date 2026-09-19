@@ -6,13 +6,59 @@ export function Card({ children, style }: { children: ReactNode; style?: React.C
       style={{
         background: "var(--alloy-white)",
         border: "1px solid var(--alloy-gray-200)",
-        borderRadius: 10,
-        padding: 16,
+        borderRadius: 12,
+        padding: 18,
+        boxShadow: "0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 8px rgba(15, 23, 42, 0.03)",
         ...style,
       }}
     >
       {children}
     </div>
+  );
+}
+
+/** Card de metrica, in stilul mockup-ului primit: iconita pe fundal colorat,
+ * valoare mare, eticheta discreta. Fara procent de crestere fabricat — doar
+ * date reale, cifra afisata e cea reala din baza de date. */
+export function StatCard({
+  icon,
+  label,
+  value,
+  tone = "red",
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string | number;
+  tone?: "red" | "blue" | "green" | "purple";
+}) {
+  const tones: Record<string, [string, string]> = {
+    red: ["var(--alloy-red-soft)", "var(--alloy-red)"],
+    blue: ["#eef4ff", "#2563eb"],
+    green: ["#e9f8f0", "var(--alloy-green)"],
+    purple: ["#f3eefc", "#7c3aed"],
+  };
+  const [bg, fg] = tones[tone];
+  return (
+    <Card style={{ flex: 1, minWidth: 180 }}>
+      <div
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 10,
+          background: bg,
+          color: fg,
+          display: "grid",
+          placeItems: "center",
+          marginBottom: 12,
+        }}
+      >
+        {icon}
+      </div>
+      <div style={{ fontSize: 26, fontWeight: 700, color: "var(--alloy-gray-900)", lineHeight: 1.1 }}>
+        {value}
+      </div>
+      <div style={{ fontSize: 12, color: "var(--alloy-gray-500)", marginTop: 4 }}>{label}</div>
+    </Card>
   );
 }
 
