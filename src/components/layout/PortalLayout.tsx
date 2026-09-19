@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 
 const NAV = [
   { to: "/portal", label: "Acasa", end: true },
@@ -9,6 +10,8 @@ const NAV = [
 ];
 
 export function PortalLayout() {
+  const { lines } = useCart();
+  const itemCount = lines.reduce((sum, l) => sum + l.quantity, 0);
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <header
@@ -51,9 +54,26 @@ export function PortalLayout() {
               fontWeight: 600,
               textDecoration: "none",
               color: isActive ? "var(--alloy-red)" : "var(--alloy-gray-500)",
+              position: "relative",
             })}
           >
             {item.label}
+            {item.to === "/portal/cos" && itemCount > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: -6,
+                  right: -10,
+                  background: "var(--alloy-red)",
+                  color: "#fff",
+                  borderRadius: 999,
+                  fontSize: 10,
+                  padding: "1px 5px",
+                }}
+              >
+                {itemCount}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>

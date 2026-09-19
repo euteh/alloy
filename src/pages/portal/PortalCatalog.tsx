@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import type { ClientCategoryDiscount, Product, ProductCategory } from "@/lib/types";
 import { clientPrice } from "@/lib/pricing";
-import { Card, PageTitle, Select } from "@/components/ui/primitives";
+import { Button, Card, PageTitle, Select } from "@/components/ui/primitives";
 
 export function PortalCatalog() {
   const { appUser } = useAuth();
+  const { add } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [discounts, setDiscounts] = useState<ClientCategoryDiscount[]>([]);
@@ -57,8 +59,17 @@ export function PortalCatalog() {
                   {finalPrice.toFixed(2)} € /{p.unit}
                 </div>
                 {discountPercentage > 0 && (
-                  <div style={{ fontSize: 11, color: "var(--alloy-gray-500)" }}>-{discountPercentage}%</div>
+                  <div style={{ fontSize: 11, color: "var(--alloy-gray-500)", marginBottom: 4 }}>
+                    -{discountPercentage}%
+                  </div>
                 )}
+                <Button
+                  onClick={() =>
+                    add({ productId: p.id, sku: p.sku, name: p.name, unit: p.unit, displayUnitPrice: finalPrice })
+                  }
+                >
+                  + Cos
+                </Button>
               </div>
             </div>
           </Card>
